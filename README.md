@@ -10,17 +10,15 @@ We evaluated Bamba’s performance by varying:
 - Inference settings (use_cache=True vs. False)
 - Model depth (reduced layers for profiling vs. full depth for accuracy) 
 
-## Outline for Running Bamba-9B Benchmarks: 
+
+## Experimental Flow
+![Experimental Flow](assets/experimental_flow.png)
 | Benchmark Type | # Layers | Use_Cache |
 |--------------| ---------- | ------------------ |
 | Accuracy        | 32 | True |
 |Performance  | 4 | False |
 
-
-## Approach
-![Experimental Flow](assets/experimental_flow.png)
-
-## Experimental Evaluation
+## Evaluation and Key Results
 
 #### Latency and Throughput
 
@@ -48,6 +46,12 @@ Default model produced a wider and lower-scoring distribution, while our default
 In addition to evaluating various module architectures, we ran a series of experiments focused specifically on compiler-level speedups. Rather than changing the model itself, we used different modes and options within `torch.compile`. The configuration that delivered the best results combined `max_autotune` with `epilogue_fusion`, achieving an average latency of 11.88 seconds and throughput of 8.4 tokens per second. `Max_autotune` is designed to search for the most efficient kernel implementation, while `epilogue_fusion` reduces GPU overhead by fusing post-processing steps into a single kernel. 
 
 ![Torch Compile](assets/torch_compile.png)
+
+#### Summary
+
+* Implementing the SSM module with a custom Triton kernel (Default Optimized module) led to a 28% increase in throughput and 22% reduction in latency, while also improving prediction quality.
+* Introducing independent chunking enabled parallelization, providing similar performance gains as the Default Optimized module.
+
 
 ## Structure and contents of this Repository
 
